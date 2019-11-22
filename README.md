@@ -20,7 +20,7 @@ samples, guidance on mobile development, and a full API reference.
 
 implementation
 
-[path_provider]: https://pub.dev/packages/path_provider
+[path_provider]: https://pub.dev/packages/path_provider	"Path_provider"
 
  or
 
