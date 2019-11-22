@@ -1,0 +1,22 @@
+name: flutter_updater
+description: A new Flutter plugin.
+version: 0.0.1
+homepage: "https://github.com/vickyleu"
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^3.0.6
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    androidPackage: com.bond520.plugins.flutter_updater
+    pluginClass: FlutterUpdatePlugin

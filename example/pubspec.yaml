@@ -1,0 +1,23 @@
+name: flutter_updater_example
+description: Demonstrates how to use the flutter_updater plugin.
+publish_to: 'none'
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  dio: ^3.0.6
+  path_provider: ^1.4.4
+  flutter_updater:
+    path: ../
+
+flutter:
+
+  uses-material-design: true
