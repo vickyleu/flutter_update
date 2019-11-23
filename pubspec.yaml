@@ -1,6 +1,6 @@
 name: flutter_updater
 description: flutter apk downloader for android with automatic install.
-version: 0.1.3
+version: 0.1.4
 homepage: "https://github.com/vickyleu"
 github: "https://github.com/vickyleu"
 publish_to: "https://pub.dev/packages/flutter_updater"
