@@ -1,4 +1,4 @@
-package com.bond520.plugins.flutter_update;
+package com.bond520.plugins.flutter_updater;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -91,11 +90,6 @@ public final class FlutterUpdatePlugin implements FlutterPlugin, ActivityAware, 
 
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
     ActivityPluginBinding activityBinding = this.activityBinding;
-
-    channel.invokeMethod("failure", _toMap("文件为空",1));
-    result.success("文件为空");
-if(true)
-    return;
     if (activityBinding != null) {
       Activity activity = activityBinding.getActivity();
         String method = call.method;
@@ -120,8 +114,6 @@ if(true)
                     activity.startActivityForResult(intent, REQ_CODE);
                   }
                 } else {
-                  channel.invokeMethod("success",null);
-                  result.success("开始安装");
                   this.installFromPath(activity, path, result);
                 }
               }
@@ -151,6 +143,9 @@ if(true)
         intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setDataAndType(Uri.parse("file://" + file), "application/vnd.android.package-archive");
       }
+      if(channel==null)return;
+      channel.invokeMethod("success","文件路径"+file.getAbsolutePath());
+      result.success("开始安装"+file.getAbsolutePath());
       activity.startActivity(intent);
     }
   }

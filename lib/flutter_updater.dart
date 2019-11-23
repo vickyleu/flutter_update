@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-
+import 'package:path/path.dart' as p;
 import 'DownLoadManage.dart';
 
-typedef void SuccessBlock(FlutterUpdater updater);
+typedef void SuccessBlock(FlutterUpdater updater,String reason);
 typedef void FailureBlock(FlutterUpdater updater,String reason,int flag);
 
 class FlutterUpdater {
@@ -21,7 +20,8 @@ class FlutterUpdater {
          _failure(reason,flag);
           break;
         case "success":
-          _success();
+          String result= (call.arguments as List).first;
+          _success(result);
           break;
       }
       return;
@@ -42,8 +42,8 @@ class FlutterUpdater {
   _failure(String failure,int flag){
     _failureBlock(this,failure,flag);
   }
-  _success(){
-    _successBlock(this);
+  _success(String result){
+    _successBlock(this,result);
   }
 
   void registerCallback(SuccessBlock successBlock,FailureBlock failureBlock){
@@ -62,9 +62,11 @@ class FlutterUpdater {
     await _channel.invokeMethod("install", {"path": path});
   }
 
-   Future<void> download({@required String url,@required String savePath,@required String fileName,Function(dynamic) callback}) async{
+   Future<void> download({@required String url,@required String savePath,Function(dynamic) callback}) async{
     if(Platform.isAndroid){
-      var file="$savePath/$fileName";
+      final extension=p.extension(url);
+      final fileName=p.basenameWithoutExtension(url);
+      var file="$savePath/$fileName.$extension";
       File f = File(savePath);
       if (!await f.exists()) {
         new Directory(savePath).createSync();

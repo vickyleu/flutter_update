@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_update/flutter_updater.dart';
+import 'package:flutter_updater/flutter_updater.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() => runApp(MyApp());
@@ -66,7 +66,7 @@ class _EmptyPage extends State<EmptyPage>{
   Future _download() async{
     final Directory directory = await getTemporaryDirectory();
     FlutterUpdater.instance()
-        ..registerCallback((updater){
+        ..registerCallback((updater,result){
           print("成功啦");
           updater.dispose();
           return;
@@ -75,9 +75,9 @@ class _EmptyPage extends State<EmptyPage>{
           updater.dispose();
           return;
         })
-        ..download(url:"http://download.dcloud.net.cn/HBuilder.9.0.2.macosx_64.dmg",
-        savePath:"${directory.path}/xxx/",
-        fileName:"HBuilder.9.0.2.macosx_64.dmg",callback: (f){
+        ..download(
+            url:"http://download.dcloud.net.cn/HBuilder.9.0.2.macosx_64.dmg",savePath:"${directory.path}/xxx/",
+        callback: (f){
          print("ooooobbbbbjjj===>>$f");
         });
   }
