@@ -74,18 +74,25 @@ class FlutterUpdater {
 
   ///使用dart做文件下载处理
   Future<void> download(
-      {@required String url,
+      {@required String url,bool forceCover,
       @required String savePath,
       Function(dynamic) callback}) async {
     if (Platform.isAndroid) {
       final extension = p.extension(url);
       final fileName = p.basenameWithoutExtension(url);
-      var file = "$savePath/$fileName.$extension";
-      File f = File(savePath);
-      if (!await f.exists()) {
+      var fileRealPath = "$savePath/$fileName.$extension";
+      File file = File(savePath);
+      if (!await file.exists()) {
         new Directory(savePath).createSync();
       }
-      await DownLoadManage().download(url, file,
+
+      if(forceCover){
+        File file = File(fileRealPath);
+        if (await file.exists()) {
+         await file.delete();
+        }
+      }
+      await DownLoadManage().download(url, fileRealPath,
           onReceiveProgress: (received, total) {
         if (total != -1) {
           print("下载1已接收：" +
@@ -97,7 +104,7 @@ class FlutterUpdater {
         }
       }, done: () async {
         print("下载1完成");
-        callback(await install(file));
+        callback(await install(fileRealPath));
       }, failed: (e) {
         print("下载1失败：" + e.toString());
       });
