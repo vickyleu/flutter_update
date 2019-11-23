@@ -18,6 +18,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
@@ -39,16 +40,15 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-class EmptyPage extends StatefulWidget{
 
+class EmptyPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return _EmptyPage();
   }
-
 }
 
-class _EmptyPage extends State<EmptyPage>{
+class _EmptyPage extends State<EmptyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,29 +57,33 @@ class _EmptyPage extends State<EmptyPage>{
       ),
     );
   }
+
   @override
   void initState() {
     super.initState();
     _download();
   }
 
-  Future _download() async{
+  Future _download() async {
     final Directory directory = await getTemporaryDirectory();
     FlutterUpdater.instance()
-        ..registerCallback((updater,result){
-          print("成功啦");
-          updater.dispose();
-          return;
-        }, (updater,reason,flag){
-          print("失败啦$reason");
-          updater.dispose();
-          return;
-        })
-        ..download(
-            url:"http://download.dcloud.net.cn/HBuilder.9.0.2.macosx_64.dmg",savePath:"${directory.path}/xxx/",
-        callback: (f){
-         print("ooooobbbbbjjj===>>$f");
-        });
+      ..registerCallback(
+          successBlock: (updater, result) {
+            print("成功啦");
+            updater.dispose();
+            return;
+          },
+          progressBlock: (receiveProgress, total) {},
+          failureBlock: (updater, reason, flag) {
+            print("失败啦$reason");
+            updater.dispose();
+            return;
+          })
+      ..download(
+          url: "http://download.dcloud.net.cn/HBuilder.9.0.2.macosx_64.dmg",
+          savePath: "${directory.path}/xxx/",
+          callback: (f) {
+            print("ooooobbbbbjjj===>>$f");
+          });
   }
-
 }

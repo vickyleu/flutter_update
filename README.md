@@ -20,28 +20,31 @@ samples, guidance on mobile development, and a full API reference.
 
 implementation
 
-[path_provider]: https://pub.dev/packages/path_provider	"Path_provider"
+[path_provider](https://pub.dev/packages/path_provider "Path_provider")
 
  or
 
 define some else
 
 ```
-final String directory = await getTemporaryDirectory().path;
-
-FlutterUpdater.instance()
-    ..registerCallback((updater){
-      print("成功啦 success");
-      updater.dispose();
-      return;
-    }, (updater,reason,flag){
-      print("失败啦 failure:$reason flag=$flag");
-      updater.dispose();
-      return;
-    })
-    ..download(url:"http://download.dcloud.net.cn/HBuilder.9.0.2.macosx_64.dmg",
-    savePath:"${directory}/xxx/",
-    fileName:"HBuilder.9.0.2.macosx_64.dmg",callback: (desc){
-     print("install desc $f");
-    });
+final Directory directory = await getTemporaryDirectory();
+    FlutterUpdater.instance()
+      ..registerCallback(
+          successBlock: (updater, result) {
+            print("成功啦");
+            updater.dispose();
+            return;
+          },
+          progressBlock: (receiveProgress, total) {},
+          failureBlock: (updater, reason, flag) {
+            print("失败啦$reason");
+            updater.dispose();
+            return;
+          })
+      ..download(
+          url: "http://download.dcloud.net.cn/HBuilder.9.0.2.macosx_64.dmg",
+          savePath: "${directory.path}/xxx/",
+          callback: (f) {
+            print("ooooobbbbbjjj===>>$f");
+          });
 ```

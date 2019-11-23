@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'DownLoadManage.dart';
 
 typedef void SuccessBlock(FlutterUpdater updater, String reason);
+typedef void ProgressBlock(int receiveProgress,int total);
 typedef void FailureBlock(FlutterUpdater updater, String reason, int flag);
 
 class FlutterUpdater {
@@ -39,6 +40,7 @@ class FlutterUpdater {
   }
 
   SuccessBlock _successBlock;
+  ProgressBlock _progressBlock;
   FailureBlock _failureBlock;
 
   ///失败的回调
@@ -52,14 +54,16 @@ class FlutterUpdater {
   }
 
   ///注册回调
-  void registerCallback(SuccessBlock successBlock, FailureBlock failureBlock) {
+  void registerCallback({SuccessBlock successBlock,ProgressBlock progressBlock, FailureBlock failureBlock}) {
     _successBlock = successBlock;
+    _progressBlock = progressBlock;
     _failureBlock = failureBlock;
   }
 
   ///释放回调
   void dispose() {
     _successBlock = null;
+    _progressBlock = null;
     _failureBlock = null;
   }
 
@@ -89,6 +93,7 @@ class FlutterUpdater {
               "总共：" +
               total.toString() +
               "进度：+${(received / total * 100).floor()}%");
+          _progressBlock((received / total * 100).floor(),total);
         }
       }, done: () async {
         print("下载1完成");
