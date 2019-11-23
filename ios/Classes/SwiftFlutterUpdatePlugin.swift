@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class SwiftFlutterUpdaterPlugin: NSObject, FlutterPlugin {
+public class SwiftFlutterUpdatePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "flutter_updater", binaryMessenger: registrar.messenger())
-    let instance = SwiftFlutterUpdaterPlugin()
+    let instance = SwiftFlutterUpdatePlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
