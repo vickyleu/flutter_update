@@ -1,3 +1,3 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.bond520.plugins.flutter_updater">
+  package="com.example.plugins.flutter_updater">
 </manifest>

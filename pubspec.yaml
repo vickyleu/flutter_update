@@ -21,5 +21,5 @@ dev_dependencies:
 
 flutter:
   plugin:
-    androidPackage: com.bond520.plugins.flutter_updater
+    androidPackage: com.example.plugins.flutter_updater
     pluginClass: FlutterUpdatePlugin

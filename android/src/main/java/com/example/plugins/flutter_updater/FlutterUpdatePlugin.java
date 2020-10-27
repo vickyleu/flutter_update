@@ -1,4 +1,4 @@
-package com.bond520.plugins.flutter_updater;
+package com.example.plugins.flutter_updater;
 
 import android.app.Activity;
 import android.content.Context;
