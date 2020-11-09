@@ -1,25 +1,21 @@
 name: flutter_updater
 description: flutter apk downloader for android with automatic install.
-version: 0.2.4
+version: 0.2.5
 homepage: "https://github.com/vickyleu/flutter_update"
 github: "https://github.com/vickyleu/flutter_update"
 publish_to: "https://pub.dev/packages/flutter_updater"
 
 environment:
-  sdk: ">=2.9.0 <=2.11.0"
-  flutter:  ^1.10.0
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.20.0"
+
 
 dependencies:
   flutter:
     sdk: flutter
-  dio: ^3.0.10
-  path: ^1.8.0-nullsafety.1
+  dio: any
+  path: ^1.7.0
 
-
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
 
 flutter:
   plugin:
