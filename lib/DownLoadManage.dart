@@ -10,10 +10,10 @@ class DownLoadManage {
   var downloadingUrls = new Map<String, CancelToken>();
 
   /// 单例公开访问点
-  factory DownLoadManage() => _getInstance();
+  factory DownLoadManage() => _getInstance()!;
 
   /// 静态私有成员，没有初始化
-  static DownLoadManage _instance;
+  static DownLoadManage? _instance;
 
   /// 私有构造函数
   DownLoadManage._() {
@@ -21,7 +21,7 @@ class DownLoadManage {
   }
 
   /// 静态、同步、私有访问点
-  static DownLoadManage _getInstance() {
+  static DownLoadManage? _getInstance() {
     if (_instance == null) {
       _instance = DownLoadManage._();
     }
@@ -36,9 +36,9 @@ class DownLoadManage {
 
   ///下载
   Future download(url, savePath,
-      {ProgressCallback onReceiveProgress,
-      Function done,
-      Function failed}) async {
+      {ProgressCallback? onReceiveProgress,
+      Function? done,
+      Function? failed}) async {
     int downloadStart = 0;
     bool fileExists = false;
     File f = File(savePath);
@@ -52,10 +52,10 @@ class DownLoadManage {
       return;
     }
     var dio = Dio();
-    int contentLength = await _getContentLength(dio, url);
+    int contentLength = await (_getContentLength(dio, url) as FutureOr<int>);
     if (downloadStart == contentLength) {
       ///存在本地文件，命中缓存
-      done();
+      done!();
       return;
     }
     CancelToken cancelToken = new CancelToken();
@@ -80,10 +80,10 @@ class DownLoadManage {
         Future future = completer.future;
 
         int received = start;
-        int total = int.parse(response.headers["Content-Length"].first);
+        int total = int.parse(response.headers["Content-Length"]!.first);
         Stream<List<int>> stream = response.data.stream;
-        StreamSubscription subscription;
-        Future asyncWrite;
+        late StreamSubscription subscription;
+        Future? asyncWrite;
         subscription = stream.listen(
           (data) {
             subscription.pause();
@@ -132,7 +132,7 @@ class DownLoadManage {
           cancelOnError: true,
         );
         // ignore: unawaited_futures
-        cancelToken?.whenCancel?.then((_) async {
+        cancelToken.whenCancel.then((_) async {
           await subscription.cancel();
           await asyncWrite;
           await raf.close();
@@ -140,20 +140,26 @@ class DownLoadManage {
 
         return await _listenCancelForAsyncTask(cancelToken, future);
       } catch (e) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx and is also not 304.
-        if (e.response != null) {
-          print(e.response.data);
-          print(e.response.headers);
-          print(e.response.request);
-        } else {
-          // Something happened in setting up or sending the request that triggered an Error
-          print(e.request);
-          print(e.message);
-        }
-        if (CancelToken.isCancel(e)) {
-          print("下载取消");
-        } else {
+        if(e is DioError){
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx and is also not 304.
+          if (e.response != null) {
+            print(e.response!.data);
+            print(e.response!.headers);
+            print(e.response!.requestOptions);
+          } else {
+            // Something happened in setting up or sending the request that triggered an Error
+            print(e.requestOptions);
+            print(e.message);
+          }
+          if (CancelToken.isCancel(e)) {
+            print("下载取消");
+          } else {
+            if (failed != null) {
+              failed(e);
+            }
+          }
+        }else{
           if (failed != null) {
             failed(e);
           }
@@ -169,7 +175,7 @@ class DownLoadManage {
   Future _getContentLength(Dio dio, url) async {
     try {
       Response response = await dio.head(url);
-      return int.parse(response.headers["Content-Length"].first);
+      return int.parse(response.headers["Content-Length"]!.first);
     } catch (e) {
       print("_getContentLength Failed:" + e.toString());
       return 0;
@@ -179,7 +185,7 @@ class DownLoadManage {
   ///停止下载
   void stop(String url) {
     if (downloadingUrls.containsKey(url)) {
-      downloadingUrls[url].cancel();
+      downloadingUrls[url]!.cancel();
     }
   }
 
@@ -201,7 +207,7 @@ class DownLoadManage {
     if (err is DioError) {
       return err;
     } else {
-      var _err = DioError(error: err);
+      var _err = DioError(error: err, requestOptions: RequestOptions(path: "/"));
       return _err;
     }
   }

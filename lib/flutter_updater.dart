@@ -7,7 +7,7 @@ import 'DownLoadManage.dart';
 
 typedef void SuccessBlock(FlutterUpdater updater, String reason);
 typedef void ProgressBlock(int receiveProgress,int total);
-typedef void FailureBlock(FlutterUpdater updater, String reason, int flag);
+typedef void FailureBlock(FlutterUpdater updater, String? reason, int? flag);
 
 class FlutterUpdater {
   MethodChannel _channel = const MethodChannel('flutter_updater');
@@ -17,8 +17,8 @@ class FlutterUpdater {
     _channel.setMethodCallHandler((call) {
       switch (call?.method ?? "") {
         case "failure":
-          String reason = call.arguments["reason"];
-          int flag = call.arguments["flag"];
+          String? reason = call.arguments["reason"];
+          int? flag = call.arguments["flag"];
           _failure(reason, flag);
           break;
         case "success":
@@ -27,34 +27,34 @@ class FlutterUpdater {
           break;
       }
       return;
-    });
+    } as Future<dynamic> Function(MethodCall)?);
   }
 
   ///单实例
-  static FlutterUpdater _instance;
-  static FlutterUpdater instance() {
+  static FlutterUpdater? _instance;
+  static FlutterUpdater? instance() {
     if (_instance == null) {
       _instance = FlutterUpdater._();
     }
     return _instance;
   }
 
-  SuccessBlock _successBlock;
-  ProgressBlock _progressBlock;
-  FailureBlock _failureBlock;
+  SuccessBlock? _successBlock;
+  ProgressBlock? _progressBlock;
+  FailureBlock? _failureBlock;
 
   ///失败的回调
-  _failure(String failure, int flag) {
-    _failureBlock(this, failure, flag);
+  _failure(String? failure, int? flag) {
+    _failureBlock!(this, failure, flag);
   }
 
   ///成功的回调
   _success(String result) {
-    _successBlock(this, result);
+    _successBlock!(this, result);
   }
 
   ///注册回调
-  void registerCallback({SuccessBlock successBlock,ProgressBlock progressBlock, FailureBlock failureBlock}) {
+  void registerCallback({SuccessBlock? successBlock,ProgressBlock? progressBlock, FailureBlock? failureBlock}) {
     _successBlock = successBlock;
     _progressBlock = progressBlock;
     _failureBlock = failureBlock;
@@ -74,9 +74,9 @@ class FlutterUpdater {
 
   ///使用dart做文件下载处理
   Future<void> download(
-      {@required String url,bool forceCover,
-      @required String savePath,
-      Function(dynamic) callback}) async {
+      {required String url,bool? forceCover,
+      required String savePath,
+      Function(dynamic)? callback}) async {
     if (Platform.isAndroid) {
       final extension = p.extension(url);
       final fileName = p.basenameWithoutExtension(url);
@@ -86,7 +86,7 @@ class FlutterUpdater {
         new Directory(savePath).createSync();
       }
 
-      if(forceCover){
+      if(forceCover!){
         File file = File(fileRealPath);
         if (await file.exists()) {
          await file.delete();
@@ -100,11 +100,11 @@ class FlutterUpdater {
               "总共：" +
               total.toString() +
               "进度：+${(received / total * 100).floor()}%");
-          _progressBlock((received / total * 100).floor(),total);
+          _progressBlock!((received / total * 100).floor(),total);
         }
       }, done: () async {
         print("下载1完成");
-        callback(await install(fileRealPath));
+        callback!(await install(fileRealPath));
       }, failed: (e) {
         print("下载1失败：" + e.toString());
       });

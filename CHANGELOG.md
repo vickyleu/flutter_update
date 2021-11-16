@@ -1,3 +1,6 @@
+##0.2.6
+* 修改dependency条件
+
 ##0.2.5
 * 修改dependency条件
 
