@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
+
 import 'DownLoadManage.dart';
 
 typedef void SuccessBlock(FlutterUpdater updater, String reason);
-typedef void ProgressBlock(int receiveProgress,int total);
+typedef void ProgressBlock(int receiveProgress, int total);
 typedef void FailureBlock(FlutterUpdater updater, String? reason, int? flag);
 
 class FlutterUpdater {
@@ -32,11 +33,12 @@ class FlutterUpdater {
 
   ///单实例
   static FlutterUpdater? _instance;
-  static FlutterUpdater? instance() {
+
+  static FlutterUpdater instance() {
     if (_instance == null) {
       _instance = FlutterUpdater._();
     }
-    return _instance;
+    return _instance!;
   }
 
   SuccessBlock? _successBlock;
@@ -54,7 +56,10 @@ class FlutterUpdater {
   }
 
   ///注册回调
-  void registerCallback({SuccessBlock? successBlock,ProgressBlock? progressBlock, FailureBlock? failureBlock}) {
+  void registerCallback(
+      {SuccessBlock? successBlock,
+      ProgressBlock? progressBlock,
+      FailureBlock? failureBlock}) {
     _successBlock = successBlock;
     _progressBlock = progressBlock;
     _failureBlock = failureBlock;
@@ -74,7 +79,8 @@ class FlutterUpdater {
 
   ///使用dart做文件下载处理
   Future<void> download(
-      {required String url,bool? forceCover,
+      {required String url,
+      bool? forceCover,
       required String savePath,
       Function(dynamic)? callback}) async {
     if (Platform.isAndroid) {
@@ -86,10 +92,10 @@ class FlutterUpdater {
         new Directory(savePath).createSync();
       }
 
-      if(forceCover!){
+      if (forceCover!) {
         File file = File(fileRealPath);
         if (await file.exists()) {
-         await file.delete();
+          await file.delete();
         }
       }
       await DownLoadManage().download(url, fileRealPath,
@@ -100,7 +106,7 @@ class FlutterUpdater {
               "总共：" +
               total.toString() +
               "进度：+${(received / total * 100).floor()}%");
-          _progressBlock!((received / total * 100).floor(),total);
+          _progressBlock!((received / total * 100).floor(), total);
         }
       }, done: () async {
         print("下载1完成");
