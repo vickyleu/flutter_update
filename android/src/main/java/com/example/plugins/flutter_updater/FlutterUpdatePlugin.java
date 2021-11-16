@@ -99,7 +99,7 @@ public final class FlutterUpdatePlugin implements FlutterPlugin, ActivityAware, 
                 if (path == null) {
                   if(channel==null)return;
                   channel.invokeMethod("failure", _toMap("文件为空",1));
-                  result.success("文件为空");
+                  resultCall(result,"文件为空");
                   return;
                 }
                 if (VERSION.SDK_INT >= 26) {
@@ -112,6 +112,10 @@ public final class FlutterUpdatePlugin implements FlutterPlugin, ActivityAware, 
                     Uri packageURI = Uri.parse("package:" + activity.getPackageName());
                     Intent intent = new Intent("android.settings.MANAGE_UNKNOWN_APP_SOURCES", packageURI);
                     activity.startActivityForResult(intent, REQ_CODE);
+
+//                    if(channel==null)return;
+//                    channel.invokeMethod("failure", _toMap("没有安装权限",2));
+//                    resultCall(result,"没有安装权限");
                   }
                 } else {
                   this.installFromPath(activity, path, result);
@@ -126,7 +130,7 @@ public final class FlutterUpdatePlugin implements FlutterPlugin, ActivityAware, 
     if (!this.isAPK(file)) {
       if(channel==null)return;
       channel.invokeMethod("failure", _toMap("安装包不合法",4));
-      result.success("安装包不合法");
+      resultCall(result,"安装包不合法");
     } else {
       Intent intent = new Intent("android.intent.action.VIEW");
       if (VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -145,9 +149,16 @@ public final class FlutterUpdatePlugin implements FlutterPlugin, ActivityAware, 
       }
       if(channel==null)return;
       channel.invokeMethod("success","文件路径"+file.getAbsolutePath());
-      result.success("开始安装"+file.getAbsolutePath());
+
+      resultCall(result,"开始安装"+file.getAbsolutePath());
       activity.startActivity(intent);
     }
+  }
+
+  private void  resultCall(Result result,String message){
+    try{
+      result.success(message);
+    }catch (Exception e){}
   }
 
   public final boolean isAPK(@NonNull File file) {
@@ -191,15 +202,16 @@ public final class FlutterUpdatePlugin implements FlutterPlugin, ActivityAware, 
         if (result != null) {
           ActivityPluginBinding activityBinding = FlutterUpdatePlugin.this.activityBinding;
           MethodCall callBack = FlutterUpdatePlugin.this.callBack;
-          if (resultCode == -1) {
+          if (resultCode != Activity.RESULT_OK) {
             if(channel==null)return true;
             channel.invokeMethod("failure", _toMap("没有安装权限",2));
-            result.success("没有安装权限");
+            resultCall(result,"没有安装权限");
+            return false;
           }
           if(activityBinding==null||callBack==null){
             if(channel==null)return true;
             channel.invokeMethod("failure", _toMap("页面已销毁",3));
-            result.success("页面已销毁");
+            resultCall(result,"页面已销毁");
           }else  {
             String path = (String) callBack.argument("path");
             if(!TextUtils.isEmpty(path)){
@@ -208,7 +220,7 @@ public final class FlutterUpdatePlugin implements FlutterPlugin, ActivityAware, 
             }else {
               if(channel==null)return true;
               channel.invokeMethod("failure", _toMap("文件为空",1));
-              result.success("文件为空");
+              resultCall(result,"文件为空");
             }
           }
         }

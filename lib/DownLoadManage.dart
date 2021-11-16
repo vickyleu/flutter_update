@@ -52,7 +52,17 @@ class DownLoadManage {
       return;
     }
     var dio = Dio();
-    int contentLength = await (_getContentLength(dio, url) as FutureOr<int>);
+    var uri=Uri.parse(url);
+    // Ignore any fragments on the request URI.
+    uri = uri.removeFragment();
+    if (uri.host.isEmpty) {
+      failed?.call(ArgumentError("下载路劲不正确"));
+      return;
+    } else if (uri.scheme != "http" && uri.scheme != "https") {
+      failed?.call(ArgumentError("下载路劲不正确"));
+      return;
+    }
+    int contentLength = await (_getContentLength(dio, url));
     if (downloadStart == contentLength) {
       ///存在本地文件，命中缓存
       done!();
@@ -172,7 +182,7 @@ class DownLoadManage {
   }
 
   ///获取下载的文件大小
-  Future _getContentLength(Dio dio, url) async {
+  Future<int> _getContentLength(Dio dio, url) async {
     try {
       Response response = await dio.head(url);
       return int.parse(response.headers["Content-Length"]!.first);

@@ -15,8 +15,8 @@ class FlutterUpdater {
 
   ///私有构造方法
   FlutterUpdater._() {
-    _channel.setMethodCallHandler((call) {
-      switch (call?.method ?? "") {
+    _channel.setMethodCallHandler((call) async{
+      switch (call.method ?? "") {
         case "failure":
           String? reason = call.arguments["reason"];
           int? flag = call.arguments["flag"];
@@ -27,8 +27,7 @@ class FlutterUpdater {
           _success(result);
           break;
       }
-      return;
-    } as Future<dynamic> Function(MethodCall)?);
+    });
   }
 
   ///单实例
@@ -82,7 +81,7 @@ class FlutterUpdater {
       {required String url,
       bool? forceCover,
       required String savePath,
-      Function(dynamic)? callback}) async {
+      Function(dynamic,bool flag)? callback}) async {
     if (Platform.isAndroid) {
       final extension = p.extension(url);
       final fileName = p.basenameWithoutExtension(url);
@@ -110,9 +109,10 @@ class FlutterUpdater {
         }
       }, done: () async {
         print("下载1完成");
-        callback!(await install(fileRealPath));
+        callback?.call(await install(fileRealPath),true);
       }, failed: (e) {
         print("下载1失败：" + e.toString());
+        callback?.call("下载失败",false);
       });
     }
   }
