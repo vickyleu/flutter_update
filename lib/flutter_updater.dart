@@ -16,7 +16,7 @@ class FlutterUpdater {
   ///私有构造方法
   FlutterUpdater._() {
     _channel.setMethodCallHandler((call) async{
-      switch (call.method ?? "") {
+      switch (call.method) {
         case "failure":
           String? reason = call.arguments["reason"];
           int? flag = call.arguments["flag"];
