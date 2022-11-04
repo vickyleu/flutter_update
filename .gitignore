@@ -2,7 +2,7 @@
 .dart_tool/
 .idea
 **.iml
-**.properties
+#**.properties
 .packages
 .pub/
 **.lock
